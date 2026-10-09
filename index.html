@@ -89,35 +89,22 @@
 </main>
 
 <button id="mute" type="button" aria-pressed="false">Pause song</button>
-<iframe id="player" title="Background music" allow="autoplay; encrypted-media"></iframe>
-
+<audio id="player" src="stitches.mp3" loop></audio>
 <script>
-  // Paste the YouTube video ID of "Stitches - Shawn Mendes" here (the part after v= in the link).
-  var VIDEO_ID = "VbfpW0pbvaU";
-
-  var player = document.getElementById("player");
+  <script>
+  var audio = document.getElementById("player");
   var gate = document.getElementById("gate");
   var mute = document.getElementById("mute");
-  var playing = false;
-
-  function send(cmd){
-    player.contentWindow.postMessage(JSON.stringify({event:"command", func:cmd, args:[]}), "*");
-  }
 
   document.getElementById("open").addEventListener("click", function(){
-    // Setting src inside a click is what lets the browser allow sound.
-    player.src = "https://www.youtube.com/embed/" + VIDEO_ID +
-      "?autoplay=1&loop=1&playlist=" + VIDEO_ID + "&enablejsapi=1&controls=0";
-    playing = true;
+    audio.play();
     gate.classList.add("gone");
     document.body.classList.add("open");
   });
 
   mute.addEventListener("click", function(){
-    playing = !playing;
-    send(playing ? "playVideo" : "pauseVideo");
-    mute.textContent = playing ? "Pause song" : "Play song";
-    mute.setAttribute("aria-pressed", String(!playing));
+    if (audio.paused) { audio.play(); mute.textContent = "Pause song"; }
+    else { audio.pause(); mute.textContent = "Play song"; }
   });
 </script>
 </body>

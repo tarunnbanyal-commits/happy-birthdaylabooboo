@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Birthday, Doctor 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum:#2A1020; --plum-2:#3A1830; --linen:#FFF3EC; --thread:#F0627A; --scrub:#8FC3B2;
+    --serif:"Fraunces", Georgia, serif; --sans:"Nunito", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;min-height:100%}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%, var(--plum-2), var(--plum));
+    color:var(--linen); font-family:var(--sans); line-height:1.7;
+    min-height:100vh; display:flex; justify-content:center;
+  }
+  main{width:100%; max-width:34rem; padding:3.5rem 1.5rem 5rem; text-align:center}
+
+  /* Gate: one tap opens the card and starts the song (browsers block autoplay) */
+  #gate{
+    position:fixed; inset:0; z-index:10; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:1.2rem; padding:2rem;
+    background:var(--plum); transition:opacity .9s ease, visibility .9s;
+  }
+  #gate.gone{opacity:0; visibility:hidden}
+  #gate p{font-family:var(--serif); font-style:italic; font-size:1.6rem; margin:0}
+  #open{
+    font:600 1.05rem var(--sans); color:var(--plum); background:var(--thread);
+    border:0; border-radius:2rem; padding:.85rem 2rem; cursor:pointer;
+  }
+  #open:hover,#open:focus-visible{background:var(--linen); outline:3px solid var(--scrub); outline-offset:3px}
+
+  .to{font-family:var(--serif); font-style:italic; font-size:1.25rem; color:var(--scrub); margin:0 0 .5rem}
+  h1{font-family:var(--serif); font-weight:500; font-size:clamp(2.4rem,9vw,3.6rem); line-height:1.1; margin:0 0 .5rem}
+
+  /* The memorable thing: a stitched thread that sews itself down the page, with a heartbeat */
+  .stitch{display:block; width:100%; height:84px; margin:1rem 0 1.5rem}
+  .stitch path{fill:none; stroke:var(--thread); stroke-width:2.5; stroke-linecap:round}
+  .stitch .seam{stroke-dasharray:9 8; stroke-opacity:.9}
+  .stitch .beat{stroke:var(--scrub); stroke-dasharray:420; stroke-dashoffset:420}
+  body.open .stitch .beat{animation:draw 3s ease .6s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+
+  .msg p{font-family:var(--serif); font-size:1.18rem; margin:0 0 1.3rem; text-align:left}
+  .msg p.sign{font-style:italic; color:var(--thread); text-align:center; font-size:1.3rem}
+  .ps{font-size:.95rem; color:var(--scrub); margin-top:2rem}
+
+  #mute{
+    position:fixed; right:1rem; bottom:1rem; z-index:5; border:1px solid var(--scrub); color:var(--scrub);
+    background:transparent; border-radius:2rem; padding:.45rem 1rem; font:600 .85rem var(--sans); cursor:pointer;
+  }
+  #mute:focus-visible,#mute:hover{background:var(--scrub); color:var(--plum); outline:none}
+  #player{position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; border:0}
+
+  @media (prefers-reduced-motion:reduce){
+    #gate{transition:none}
+    body.open .stitch .beat{animation:none; stroke-dashoffset:0}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <p>Something for my favorite doctor</p>
+  <button id="open">Open your card 💌</button>
+</div>
+
+<main>
+  <p class="to">To my fav doctor &lt;3</p>
+  <h1>Happy birthday, my princess</h1>
+
+  <svg class="stitch" viewBox="0 0 400 84" preserveAspectRatio="none" aria-hidden="true">
+    <path class="seam" d="M0 42 H400"/>
+    <path class="beat" d="M0 42 H140 L158 42 L170 12 L186 72 L200 30 L210 42 H400"/>
+  </svg>
+
+  <section class="msg">
+    <p>I love you sooo much, my babyy. God bless you, and even though I'm an atheist 😛 I would still pray and ask God to fulfill every single wish of yours and make you the most successful you can be, because for you I'd believe in anything.</p>
+    <p>You've turned 25, my big girl, and I couldn't be more proud of you than I already am. Having you as the love of my life is the biggest blessing of my life.</p>
+    <p>Happy birthday, my cuckooo &lt;3 I'm so lucky to be yours, and I'll love you more with every year 💌💌💌</p>
+    <p class="sign">Yours, always.</p>
+    <p class="ps">P.S. I hate apples.</p>
+  </section>
+</main>
+
+<button id="mute" type="button" aria-pressed="false">Pause song</button>
+<iframe id="player" title="Background music" allow="autoplay; encrypted-media"></iframe>
+
+<script>
+  // Paste the YouTube video ID of "Stitches - Shawn Mendes" here (the part after v= in the link).
+  var VIDEO_ID = "VbfpW0pbvaU";
+
+  var player = document.getElementById("player");
+  var gate = document.getElementById("gate");
+  var mute = document.getElementById("mute");
+  var playing = false;
+
+  function send(cmd){
+    player.contentWindow.postMessage(JSON.stringify({event:"command", func:cmd, args:[]}), "*");
+  }
+
+  document.getElementById("open").addEventListener("click", function(){
+    // Setting src inside a click is what lets the browser allow sound.
+    player.src = "https://www.youtube.com/embed/" + VIDEO_ID +
+      "?autoplay=1&loop=1&playlist=" + VIDEO_ID + "&enablejsapi=1&controls=0";
+    playing = true;
+    gate.classList.add("gone");
+    document.body.classList.add("open");
+  });
+
+  mute.addEventListener("click", function(){
+    playing = !playing;
+    send(playing ? "playVideo" : "pauseVideo");
+    mute.textContent = playing ? "Pause song" : "Play song";
+    mute.setAttribute("aria-pressed", String(!playing));
+  });
+</script>
+</body>
+</html>
